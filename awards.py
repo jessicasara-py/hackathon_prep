@@ -54,4 +54,3 @@ def award_progress(correct_answers, failed_attempts):
              GAME OVER!
         """)
 
-award_progress(7, 1)
