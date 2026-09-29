@@ -2,20 +2,28 @@ from game_logic.page_picker import pick_random_page
 from menues.main_menu import main_menu
 from menues.categories_menu import ask_user, get_article_info
 from game_logic.logic import play_game
+from game_logic.page_picker import get_article_info
 
-MENU_CATEGORY = "Wissenschaft"   # erstmal statisch, siehe game_logic/categories.py
+MENU_CATEGORY = "Geography"   # erstmal statisch, siehe game_logic/categories.py
 MIN_VIEWS = 5000                 # Aufrufe in den letzten 30 Tagen
 ROUNDS = 3
 
 
 def main():
+    used_titles: set[str] = set()  # NEU: merkt sich benutzte Artikel
+
     choice = main_menu()
 
     if choice == "1":
-        category_number = ask_user()
-        article_info = get_article_info(category_number)
+        category_number, category_name = ask_user()
+        article_info = get_article_info(int(category_number), used_titles)
 
-        print(article_info)
+        if article_info is None:
+            print("Keine passende Seite gefunden.")
+            return
+
+        page, views = article_info
+        print(page.title)
 
         test_questions = [
             {"aussage": "Berlin ist die Hauptstadt von Deutschland.", "erfunden": False},
