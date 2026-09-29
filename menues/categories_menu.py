@@ -1,40 +1,33 @@
-import wikipediaapi
 import random
 from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
+from api_calls.wikipedia_check_categories import get_category_articles
+from api_calls.wiki_client import get_wiki
 
-
+# ---------------------------------------------------------
+# 1. RICH KONSOLE
+# ---------------------------------------------------------
 console = Console(force_terminal=True)
-
-# ---------------------------------------------------------
-# 1. WIKIPEDIA VERBINDUNG
-# ---------------------------------------------------------
-
-wiki = wikipediaapi.Wikipedia(
-    language='en',
-    user_agent='WikiTrivia/1.0'
-)
 
 # ---------------------------------------------------------
 # 2. KATEGORIEN
 # ---------------------------------------------------------
 
 CATEGORIES = {
-    1: {"name": "Geography", "wiki": "Category:Geography", "color": "red"},
-    2: {"name": "History", "wiki": "Category:History", "color": "green"},
-    3: {"name": "Sports", "wiki": "Category:Sports", "color": "yellow"},
-    4: {"name": "Technology", "wiki": "Category:Technology", "color": "blue"},
-    5: {"name": "Music", "wiki": "Category:Music", "color": "magenta"}
+    1: {"name": "Geography", "api_name": "Geography", "color": "red"},
+    2: {"name": "History", "api_name": "History", "color": "green"},
+    3: {"name": "Sports", "api_name": "Sports", "color": "yellow"},
+    4: {"name": "Technology", "api_name": "Technology", "color": "blue"},
+    5: {"name": "Music", "api_name": "Music", "color": "magenta"}
 }
 
-
 # ---------------------------------------------------------
-# 3. FUNKTIONEN
+# 3. MENÜ FUNKTIONEN
 # ---------------------------------------------------------
 
 def show_menu():
-
+    """Zeigt das nummerierte Menü in einer schönen Box an."""
     menu_text = Text()
     for number in CATEGORIES:
         info = CATEGORIES[number]
@@ -49,7 +42,7 @@ def show_menu():
     console.print(panel)
 
 def ask_user():
-
+    """Fragt den User nach einer Nummer von 1 bis 5."""
     show_menu()
 
     while True:
@@ -62,34 +55,30 @@ def ask_user():
 
 
 def get_article_info(category_number):
-
+    """
+    Holt die Liste der Artikel von (API-CALLS), wählt einen zufälligen
+    und holt dann die Details (Titel, Link, Summary).
+    """
     category_data = CATEGORIES[category_number]
-    real_name = category_data["wiki"]
+    api_name = category_data["api_name"]
     color = category_data["color"]
-    display_name = category_data["name"]
 
-    console.print(f"\n[bold {color}]Loading data for '{display_name}'...[/bold {color}] Please wait.")
+    console.print(f"\n[bold {color}]Loading data for '{category_data['name']}'...[/bold {color}] Please wait.")
 
+    # 1. Nutzt die funktion con (API-CALLS), um alle Artikel zu holen
+    article_list = get_category_articles(api_name)
 
-    category_page = wiki.page(real_name)
-
-
-    article_list = []
-    for member in category_page.categorymembers.values():
-        if member.ns == 0:
-            article_list.append(member.title)
-
-
-    if len(article_list) == 0:
+    # Prüfen ob die liste leer ist
+    if not article_list:
         console.print("[bold red]Error: No articles found in this category![/bold red]")
         return None
 
-
+    # 2. Wählt einen zufälligen Artikel aus der Liste
     random_article_name = random.choice(article_list)
 
-
+    # 3. Holt die genauen Infos über den zentralen Wiki-Client
+    wiki = get_wiki()
     page = wiki.page(random_article_name)
-
 
     info = {
         "title": page.title,
@@ -127,4 +116,4 @@ if __name__ == "__main__":
         )
         console.print(result_panel)
     else:
-        console.print("[bold red]Could not load article. Please try another categoriy![/bold red]")
+        console.print("[bold red]Could not load article. Please try another category![/bold red]")
