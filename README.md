@@ -40,9 +40,8 @@ python3 -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
 
 # Abhängigkeiten installieren
-
 # request für check der Seitenaufrufe eine Wiki - Seite
-pip3 install wikipedia-api python-dotenv requests rich
+pip3 install wikipedia-api python-dotenv requests rich openai
 
 
 ## Konfiguration
