@@ -64,24 +64,24 @@ def ask_true_false(statement, erfunden):
 
     # Maximal drei Versuche für eine gültige Eingabe.
     for attempt in range(1, 4):
-        answer = input("  Deine Wahl [W/F] > ").strip().casefold()
+        answer = input("  Your Choice [T/F] > ").strip().casefold()
 
-        if answer in ("w", "f"):
+        if answer in ("t", "f"):
             break
 
-        print(f"  [!] Bitte gib W oder F ein. ({attempt}/3)")
+        print(f"  [!] Please enter T oder F ein. ({attempt}/3)")
     else:
-        # Dieser Teil läuft nur, wenn kein gültiges W oder F eingegeben wurde.
-        raise ValueError("Dreimal eine ungültige Antwort eingegeben.")
+        # Dieser Teil läuft nur, wenn kein gültiges T oder F eingegeben wurde.
+        raise ValueError("Entered an invalid answer three times.")
 
     # erfunden=True bedeutet: Die Aussage ist falsch und F ist richtig.
-    correct_answer = "f" if erfunden else "w"
+    correct_answer = "f" if erfunden else "t"
 
     if answer == correct_answer:
-        print("  [OK] Richtig! :)")
+        print("  [OK] Correct! :)")
         return True
 
-    print(f"  [X] Leider falsch. :( Richtig war: {correct_answer.upper()}")
+    print(f"  [X] Sorry wrong. :( Correct answer was: {correct_answer.upper()}")
     return False
 
 
@@ -91,7 +91,7 @@ def play_game(questions):
     mistakes = 0
 
     print("\n==========================================")
-    print("       WIKITRIVIA - WAHR ODER FALSCH")
+    print("       WIKITRIVIA - TRUE OR FALSE")
     print("==========================================")
 
     for number, question in enumerate(questions, start=1):
@@ -99,7 +99,7 @@ def play_game(questions):
         statement = question["aussage"]
         erfunden = question["erfunden"]
 
-        print(f"\n              RUNDE {number}")
+        print(f"\n              ROUND {number}")
         print("------------------------------------------")
 
         try:
