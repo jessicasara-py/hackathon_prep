@@ -40,7 +40,7 @@ python3 -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
 
 # Abhängigkeiten installieren
-pip3 install wikipedia-api python-dotenv
+pip3 install wikipedia-api python-dotenv rich
 ```
 
 ## Konfiguration
