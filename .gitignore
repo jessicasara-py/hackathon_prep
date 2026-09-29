@@ -1,4 +1,7 @@
 .idea
 .env
+__pycache__/
 api_calls/__pycache__/
+game_logic/__pycache__/
+menues/__pycache__/
 cache/

@@ -8,7 +8,7 @@ _wiki = None  # wird nur einmal erzeugt und dann wiederverwendet
 
 
 def get_language() -> str:
-    return os.getenv("WIKI_LANGUAGE", "de")
+    return os.getenv("WIKI_LANGUAGE", "en")
 
 
 def get_user_agent() -> str:

@@ -10,8 +10,8 @@ def get_category_articles_with_views(category: str, days: int = 30) -> dict[str,
 
     Rückgabe: {"Titel": Aufrufe, ...}
     """
-    if not category.startswith("Kategorie:"):
-        category = f"Kategorie:{category}"
+    if not category.startswith("category:"):
+        category = f"category:{category}"
 
     url = f"https://{get_language()}.wikipedia.org/w/api.php"
     params = {
@@ -38,7 +38,10 @@ def get_category_articles_with_views(category: str, days: int = 30) -> dict[str,
         data = response.json()
 
         if "error" in data:
-            raise RuntimeError(f"Wikipedia-API-Fehler: {data['error'].get('info')}")
+            raise RuntimeError(
+                f"Wikipedia-API-Fehler bei '{params['gcmtitle']}' "
+                f"({url}): {data['error'].get('info')}"
+            )
 
         for page in data.get("query", {}).get("pages", []):
             daily = page.get("pageviews") or {}

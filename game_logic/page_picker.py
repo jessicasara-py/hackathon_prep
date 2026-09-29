@@ -4,7 +4,9 @@ import wikipediaapi
 
 from api_calls.category_cache import get_cached_category_views
 from api_calls.wikipedia_get_page import get_page
-from game_logic.categories import CATEGORIES
+from game_logic.categories import CATEGORIES, get_menu_mapping
+
+MIN_VIEWS = 5000   # Aufrufe in den letzten 30 Tagen
 
 
 def pick_random_page(
@@ -13,7 +15,7 @@ def pick_random_page(
     used_titles: set[str],
 ) -> tuple[wikipediaapi.WikipediaPage, int] | None:
     """
-    Wählt einen zufälligen Artikel zu einer Menü-Kategorie (z. B. "Wissenschaft"), der
+    Wählt einen zufälligen Artikel zu einer Menü-Kategorie (z. B. "Geography"), der
       - mindestens `min_views` Aufrufe in den letzten 30 Tagen hat und
       - noch nicht in `used_titles` steht.
     Der gewählte Titel wird direkt in `used_titles` eingetragen.
@@ -40,3 +42,13 @@ def pick_random_page(
 
     used_titles.add(title)
     return page, candidates[title]
+
+
+def get_article_info(
+    category_number: int,
+    used_titles: set[str],
+) -> tuple[wikipediaapi.WikipediaPage, int] | None:
+    """Menü-Nummer (1, 2, 3 …) → zufälliger Artikel. Rückgabe: (page, views) oder None."""
+    mapping = get_menu_mapping()
+    menu_name = mapping[category_number]["name"]
+    return pick_random_page(menu_name, MIN_VIEWS, used_titles)
