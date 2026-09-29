@@ -3,7 +3,7 @@ name = "hackathon"
 version = "0.1.0"
 requires-python = ">=3.9"
 dependencies = [
-    "wikipedia-api",
+    "wikipedia-api>=0.16.0",
     "python-dotenv",
-    "rich",
+    "rich>=15.0.0",
 ]
