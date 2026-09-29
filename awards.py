@@ -26,31 +26,4 @@ def award_progress(correct_answers, failed_attempts):
             print(f"{WHITE}x{RESET}", end=" ")
 
 
-    if correct_answers == goal:
-        print("""
-             ___________
-            '._==_==_=_.'
-            .-\\:      /-.
-           | (|:.     |) |
-            '-|:.     |-'
-              \\::.    /
-               '::. .'
-                 ) (
-               _.' '._
-              `-------`
-
-             YOU WIN!
-        """)
-
-    elif failed_attempts == max_failed_attempts:
-        print("""
-              .-''''-.
-             /        \\
-            |  X    X  |
-            |    __    |
-             \\  ____  /
-              '------'
-
-             GAME OVER!
-        """)
 
