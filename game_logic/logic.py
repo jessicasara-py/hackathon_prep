@@ -1,41 +1,115 @@
-def ask_true_false(statement, is_true):
+"""
+Spiellogik für WikiTrivia.
+
+Aufgabe dieser Datei:
+- Aussagen anzeigen, hier sind gerade nur Bsp. zum testen
+- Antworten W/F prüfen, können auch andere Zeichen benutzen
+- Richtige Antworten und Fehler zählen
+- Nach 10 richtigen Antworten oder 3 Fehlern das Spiel beenden
+
+Schnittstelle für das Team:
+    play_game(questions) für die main...
+    in die main importieren >>> from game_logic.logic import play_game
+
+questions muss eine Liste von Dictionaries sein, zum Beispiel:
+    [
+        {"aussage": "Berlin ist die Hauptstadt Deutschlands.", "erfunden": False},
+        {"aussage": "Die Erde hat zwei Monde.", "erfunden": True},
+    ]
+
+Der KI-Teil liefert für jede Frage:
+- "aussage": den Text, der dem Spieler angezeigt wird
+- "erfunden": True, wenn die Aussage falsch ist; sonst False
+
+play_game() gibt einen dieser Strings an main.py zurück:
+- "won": 10 richtige Antworten erreicht >>>ASCII im main
+- "lost": 3 falsche Antworten erreicht >>>ASCII im main
+- "invalid_input": dreimal hintereinander keine gültige Eingabe
+- "not_enough_questions": Die Fragen sind aufgebraucht
+
+___________________________________________________________________
+
+BSP.: für den main Teil:
+from game_logic.logic import play_game
+
+# Hier die Fragen aus dem Wikipedia- und KI-Teil sammeln.
+# Jede Frage braucht genau die Schlüssel "aussage" und "erfunden".
+questions = [
+    {"aussage": "Berlin ist die Hauptstadt Deutschlands.", "erfunden": False}
+]
+
+result = play_game(questions)
+
+if result == "won":
+    print("Gewonnen!")  # Hier Gewinner-ASCII und Trophäen einfügen.
+elif result == "lost":
+    print("Game Over!")  # Hier Game-Over-ASCII einfügen.
+elif result == "invalid_input":
+    print("Spiel wegen ungültiger Eingaben beendet.")
+elif result == "not_enough_questions":
+    print("Es sind keine weiteren Fragen verfügbar.")
+"""
+
+
+def ask_true_false(statement, erfunden):
+    """Zeigt eine Aussage und gibt True bei richtiger Antwort zurück.
+
+    Bei drei ungültigen Eingaben wird ein ValueError ausgelöst.
+    Eine gültige, aber falsche Antwort gibt False zurück.
+    """
     print("+----------------------------------------+")
     print(f"  {statement}")
     print("+----------------------------------------+")
 
-    while True:
+    # Maximal drei Versuche für eine gültige Eingabe.
+    for attempt in range(1, 4):
         answer = input("  Deine Wahl [W/F] > ").strip().casefold()
 
         if answer in ("w", "f"):
             break
 
-        print("  [!] Bitte gib W oder F ein.")
+        print(f"  [!] Bitte gib W oder F ein. ({attempt}/3)")
+    else:
+        # Dieser Teil läuft nur, wenn kein gültiges W oder F eingegeben wurde.
+        raise ValueError("Dreimal eine ungültige Antwort eingegeben.")
 
-    correct_answer = "w" if is_true else "f"
+    # erfunden=True bedeutet: Die Aussage ist falsch und F ist richtig.
+    correct_answer = "f" if erfunden else "w"
 
     if answer == correct_answer:
-        print("  [OK] Richtig!")
+        print("  [OK] Richtig! :)")
         return True
 
-    print(f"  [X] Leider falsch. Richtig war: {correct_answer.upper()}")
+    print(f"  [X] Leider falsch. :( Richtig war: {correct_answer.upper()}")
     return False
 
 
 def play_game(questions):
-    # questions ist eine Liste von Aussagen mit der jeweiligen Lösung.
-    # Diese Liste kommt später aus dem Wikipedia-Teil.
+    """Spielt die übergebenen Fragen durch und gibt das Spielergebnis zurück."""
     correct = 0
     mistakes = 0
 
     print("\n==========================================")
-    print("       WIKIPEDIA - WAHR ODER FALSCH")
+    print("       WIKITRIVIA - WAHR ODER FALSCH")
     print("==========================================")
 
-    for number, (statement, is_true) in enumerate(questions, start=1):
+    for number, question in enumerate(questions, start=1):
+        # Diese Schlüssel müssen mit dem Ergebnis des KI-Teils übereinstimmen.
+        statement = question["aussage"]
+        erfunden = question["erfunden"]
+
         print(f"\n              RUNDE {number}")
         print("------------------------------------------")
 
-        if ask_true_false(statement, is_true):
+        try:
+            is_correct = ask_true_false(statement, erfunden)
+        except ValueError as error:
+            # Drei ungültige Eingaben beenden das Spiel mit eigenem Ergebnis.
+            # main.py kann dafür eine passende Meldung anzeigen.
+            print(f"  [X] {error}")
+            return "invalid_input"
+
+        if is_correct:
             correct += 1
         else:
             mistakes += 1
@@ -45,29 +119,24 @@ def play_game(questions):
         print("------------------------------------------")
 
         if mistakes == 3:
-            # "lost" wird an main.py zurückgegeben.
-            # Dort kann das traurige ASCII-Bild aufgerufen werden.
+            # main.py kann hier das Game-Over-ASCII-Bild anzeigen.
             return "lost"
 
         if correct == 10:
-            # "won" wird an main.py zurückgegeben.
-            # Dort kann das Gewinner-ASCII aus awards.py aufgerufen werden.
+            # main.py kann hier das Gewinnerbild und Trophäen anzeigen.
             return "won"
 
-    # Wird erreicht, wenn die Fragen ausgehen, bevor das Spiel entschieden ist.
+    # Der Fragen-Generator hat zu wenige Fragen geliefert. kann dann später weggelassen werden
     return "not_enough_questions"
 
 
 if __name__ == "__main__":
-    # Nur zum Testen. Später kommen die Fragen aus dem Wikipedia-Teil.
+    # Lokaler Test dieser Datei. Dieser Teil läuft NICHT beim Import in main.py.
     test_questions = [
-        ("Berlin ist die Hauptstadt von Deutschland.", True),
-        ("Die Erde hat zwei Monde.", False),
-        ("Paris liegt in Italien.", False),
+        {"aussage": "Berlin ist die Hauptstadt Deutschlands.", "erfunden": False},
+        {"aussage": "Die Erde hat zwei Monde.", "erfunden": True},
+        {"aussage": "Paris liegt in Italien.", "erfunden": True},
     ]
 
     result = play_game(test_questions)
     print(f"\nTestergebnis: {result}")
-
-# Später in main.py verwenden:
-# from logic import play_game
