@@ -1,4 +1,3 @@
-```python
 from game_logic.page_picker import pick_random_page
 from menues.main_menu import main_menu
 from menues.categories_menu import ask_user, get_article_info
