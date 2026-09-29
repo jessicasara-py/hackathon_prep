@@ -10,20 +10,49 @@ Prüfen mit:  python -m game_logic.categories
 """
 
 CATEGORIES: dict[str, list[str]] = {
-    "Wissenschaft": [
-        "Chemisches Element",
-        "Nobelpreisträger für Physik",
-        "Nobelpreisträger für Chemie",
+    "Geography": [
+        "Countries",
+        "Mountains",
+        "Rivers"
     ],
-    "Geographie": [
-        "Hauptstadt in Europa",
-        "Mitgliedstaat der Europäischen Union",
+    "History": [
+        "Ancient history",
+        "20th century",
+        "Historical events"
     ],
-    "Sport": [
-        "Fußballnationalspieler (Deutschland)",
-        "Fußballweltmeister (Deutschland)",
+    "Sports": [
+        "Footballers",
+        "Olympic medalists",
+        "Tennis players"
     ],
+    "Technology": [
+        "Computer science",
+        "Artificial intelligence",
+        "Software"
+    ],
+    "Music": [
+        "Rock music groups",
+        "Classical composers",
+        "Singers"
+    ]
 }
+
+
+def get_menu_mapping() -> dict[int, dict]:
+    """
+    Wandelt das CATEGORIES Dictionary in das Format um,
+    das das Menü (categories_menu.py) für die Anzeige braucht.
+    """
+    menu_mapping = {}
+    colors = ["red", "green", "yellow", "blue", "magenta"]
+
+    for i, (name, wiki_cats) in enumerate(CATEGORIES.items(), start=1):
+        menu_mapping[i] = {
+            "name": name,
+            "api_names": wiki_cats,  # Die Liste der echten Wiki-Kategorien
+            "color": colors[i - 1]
+        }
+    return menu_mapping
 
 
 def _demo():
