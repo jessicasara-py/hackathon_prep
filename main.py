@@ -1,7 +1,13 @@
-from api_calls.wikipedia_get_page import get_page
+```python
+from game_logic.page_picker import pick_random_page
 from menues.main_menu import main_menu
 from menues.categories_menu import ask_user, get_article_info
 from game_logic.logic import play_game
+
+MENU_CATEGORY = "Wissenschaft"   # erstmal statisch, siehe game_logic/categories.py
+MIN_VIEWS = 5000                 # Aufrufe in den letzten 30 Tagen
+ROUNDS = 3
+
 
 def main():
     choice = main_menu()
@@ -22,16 +28,16 @@ def main():
 
         if result == "won":
             print(r"""
-                   \_\_*             
-                 '.*==*==*=*.'             
-                 .-\:      /-.            
-                | (|:.     |) |             
-                 '-|:.     |-'               
-                   \::.    /                
-                    '::. .'                  
-                      ) (                
-                    *.' '.*               
-                   `-------`               
+                   \_\_*
+                 '.*==*==*=*.'
+                 .-\:      /-.
+                | (|:.     |) |
+                 '-|:.     |-'
+                   \::.    /
+                    '::. .'
+                      ) (
+                    *.' '.*
+                   `-------`
                    YOU WIN!
             """)
 
@@ -50,9 +56,21 @@ def main():
     elif choice == "2":
         return
 
-    page = get_page("Augsburg")
-    print(page.summary[:300] if page else "Seite nicht gefunden")
+    used_titles: set[str] = set()
+
+    for round_no in range(1, ROUNDS + 1):
+        result = pick_random_page(MENU_CATEGORY, MIN_VIEWS, used_titles)
+
+        if result is None:
+            print("Keine passende Seite gefunden.")
+            break
+
+        page, views = result
+        print(f"\n--- Frage {round_no}: {page.title} ({views} Aufrufe / 30 Tage) ---")
+        print(page.summary[:300])
+
+    print(f"\nBereits verwendet: {sorted(used_titles)}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
