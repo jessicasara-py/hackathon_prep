@@ -52,7 +52,7 @@ elif result == "not_enough_questions":
 
 from awards import award_progress  # von Julia importiert
 
-def ask_true_false(statement, erfunden):
+def ask_true_false(statement, erfunden, erklaerung=""):
     """Zeigt eine Aussage und gibt True bei richtiger Antwort zurück.
 
     Bei drei ungültigen Eingaben wird ein ValueError ausgelöst.
@@ -76,13 +76,18 @@ def ask_true_false(statement, erfunden):
 
     # erfunden=True bedeutet: Die Aussage ist falsch und F ist richtig.
     correct_answer = "f" if erfunden else "w"
+    is_correct = answer == correct_answer
 
-    if answer == correct_answer:
+    if is_correct:
         print("  [OK] Richtig! :)")
-        return True
+    else:
+        print(f"  [X] Leider falsch. :( Richtig war: ")
 
-    print(f"  [X] Leider falsch. :( Richtig war: {correct_answer.upper()}")
-    return False
+    # NEU: Erklärung in beiden Fällen anzeigen (falls vorhanden)
+    if erklaerung:
+        print(f"  ℹ {erklaerung}")
+
+    return is_correct
 
 
 def play_game(questions):
@@ -103,7 +108,7 @@ def play_game(questions):
         print("------------------------------------------")
 
         try:
-            is_correct = ask_true_false(statement, erfunden)
+            is_correct = ask_true_false(question["aussage"], question["erfunden"], question.get("erklaerung", ""))
         except ValueError as error:
             # Drei ungültige Eingaben beenden das Spiel mit eigenem Ergebnis.
             # main.py kann dafür eine passende Meldung anzeigen.

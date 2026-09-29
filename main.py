@@ -6,33 +6,55 @@ from game_logic.page_picker import get_article_info
 from ai_calls.statement_generator import generate_statement
 
 MENU_CATEGORY = "Geography"   # erstmal statisch, siehe game_logic/categories.py
-MIN_VIEWS = 5000                 # Aufrufe in den letzten 30 Tagen
 ROUNDS = 3
+MAX_ATTEMPTS = 6    # so viele Artikel probieren wir höchstens, falls die KI mal scheitert
+
+def build_questions(category_number: int, used_titles: set[str]) -> list[dict]:
+    """
+    Erzeugt ROUNDS Quizfragen aus zufälligen Wikipedia-Artikeln der gewählten Kategorie.
+    Jede Frage: {"aussage": str, "erfunden": bool, "erklaerung": str, "titel": str}
+    """
+    questions: list[dict] = []
+
+    for _ in range(MAX_ATTEMPTS):
+        if len(questions) >= ROUNDS:
+            break
+
+        article_info = get_article_info(category_number, used_titles)
+        if article_info is None:
+            break                          # keine Artikel mehr in der Kategorie
+
+        page, _ = article_info
+        print(f"  … Frage {len(questions) + 1}/{ROUNDS} wird erstellt ({page.title})")
+
+        try:
+            statement = generate_statement(page.title, page.text)
+        except Exception as error:         # KI-Fehler → nächsten Artikel probieren
+            print(f"  ! Übersprungen: {error}")
+            continue
+
+        statement["titel"] = page.title
+        questions.append(statement)
+
+    return questions
 
 
 def main():
     used_titles: set[str] = set()  # bereits verwendete Seiten
     choice = main_menu()
-    score = 0
 
     if choice == "1":
-        category_number, category_name = ask_user()
-        article_info = get_article_info(int(category_number), used_titles)
+        category_number, menu_mapping = ask_user()
+        category_name = menu_mapping[int(category_number)]["name"]
 
-        if article_info is None:
+        print(f"\nFragen zu '{category_name}' werden vorbereitet …")
+        questions = build_questions(int(category_number), used_titles)
+
+        if not questions:
             print("Keine passende Seite gefunden.")
             return
 
-        page, views = article_info
-        print(page.title)
-
-        test_questions = [
-            {"aussage": "Berlin ist die Hauptstadt von Deutschland.", "erfunden": False},
-            {"aussage": "Die Erde hat zwei Monde.", "erfunden": True},
-            {"aussage": "Paris liegt in Italien.", "erfunden": True},
-        ]
-
-        result = play_game(test_questions)
+        result = play_game(questions)
 
         if result == "won":
             print(r"""
@@ -63,33 +85,6 @@ def main():
 
     elif choice == "2":
         return
-
-    for round_no in range(1, ROUNDS + 1):
-        result = pick_random_page(MENU_CATEGORY, MIN_VIEWS, used_titles)
-        if result is None:
-            print("Keine passende Seite gefunden.")
-            break
-
-        page, views = result
-        statement = generate_statement(page.title, page.text)
-
-        print(f"\n--- Frage {round_no}: {page.title} ---")
-        print(statement["aussage"])
-
-        # Einfache Eingabe – die richtige Prüfung (max. 3 Versuche) kommt aus game_logic
-        answer = input("Wahr oder falsch? [W/F]: ").strip().upper()
-        user_says_false = answer == "F"
-
-        if user_says_false == statement["erfunden"]:
-            score += 1
-            print(":) Richtig!")
-        else:
-            print(":( Leider falsch.")
-        print(f"   {statement['erklaerung']}")
-
-    print(f"\nPunkte: {score}/{ROUNDS}")
-
-
 
 
 if __name__ == "__main__":
