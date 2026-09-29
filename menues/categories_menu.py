@@ -2,7 +2,7 @@ import random
 from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
-from categories import get_menu_mapping
+from game_logic.categories import get_menu_mapping
 from api_calls.wikipedia_check_categories import get_category_articles
 from api_calls.wiki_client import get_wiki
 
