@@ -50,6 +50,7 @@ elif result == "not_enough_questions":
     print("Es sind keine weiteren Fragen verfügbar.")
 """
 
+from awards import award_progress  # von Julia importiert
 
 def ask_true_false(statement, erfunden):
     """Zeigt eine Aussage und gibt True bei richtiger Antwort zurück.
@@ -114,9 +115,8 @@ def play_game(questions):
         else:
             mistakes += 1
 
-        print("------------------------------------------")
-        print(f"  RICHTIG: {correct}/10    FEHLER: {mistakes}/3")
-        print("------------------------------------------")
+        award_progress(correct, mistakes)   # geändert, sonst taucht es doppelt auf
+        print()                             # bei award
 
         if mistakes == 3:
             # main.py kann hier das Game-Over-ASCII-Bild anzeigen.
