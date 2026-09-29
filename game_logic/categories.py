@@ -6,6 +6,7 @@ Deshalb bildet jeder Menüpunkt auf mehrere konkrete Kategorien ab,
 die direkt viele Artikel enthalten.
 
 Prüfen mit:  python -m game_logic.categories
+(füllt dabei auch den Cache – ideal vor einer Demo)
 """
 
 CATEGORIES: dict[str, list[str]] = {
@@ -27,13 +28,13 @@ CATEGORIES: dict[str, list[str]] = {
 
 def _demo():
     # Zeigt pro Kategorie, wie viele Artikel sie hat und wie viele genug Aufrufe haben.
-    from api_calls.wikipedia_category_pageviews import get_category_articles_with_views
+    from api_calls.category_cache import get_cached_category_views
 
     min_views = 5000
     for menu, wiki_categories in CATEGORIES.items():
         print(f"\n== {menu} ==")
         for cat in wiki_categories:
-            views = get_category_articles_with_views(cat)
+            views = get_cached_category_views(cat)
             popular = sum(1 for v in views.values() if v >= min_views)
             status = "OK " if popular else "!! "
             print(f"  {status}{cat}: {len(views)} Artikel, {popular} mit >= {min_views} Aufrufen")

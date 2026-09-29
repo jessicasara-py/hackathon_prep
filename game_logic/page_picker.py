@@ -2,19 +2,9 @@ import random
 
 import wikipediaapi
 
-from api_calls.wikipedia_category_pageviews import get_category_articles_with_views
+from api_calls.category_cache import get_cached_category_views
 from api_calls.wikipedia_get_page import get_page
 from game_logic.categories import CATEGORIES
-
-# Zwischenspeicher: Kategorie → {Titel: Aufrufe}
-# Damit wird jede Kategorie pro Spiel nur einmal von der API geladen.
-_views_cache: dict[str, dict[str, int]] = {}
-
-
-def _get_views(wiki_category: str) -> dict[str, int]:
-    if wiki_category not in _views_cache:
-        _views_cache[wiki_category] = get_category_articles_with_views(wiki_category)
-    return _views_cache[wiki_category]
 
 
 def pick_random_page(
@@ -36,7 +26,7 @@ def pick_random_page(
     # Kandidaten aus allen zugehörigen Wikipedia-Kategorien sammeln
     candidates: dict[str, int] = {}
     for wiki_category in wiki_categories:
-        for title, views in _get_views(wiki_category).items():
+        for title, views in get_cached_category_views(wiki_category).items():
             if views >= min_views and title not in used_titles:
                 candidates[title] = views
 

@@ -1,3 +1,4 @@
 .idea
 .env
 api_calls/__pycache__/
+cache/
