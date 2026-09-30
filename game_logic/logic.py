@@ -27,7 +27,7 @@ from awards import award_progress  # von Julia importiert
 
 WIN_SCORE = 5       # so viele richtige Antworten zum Gewinnen
 MAX_MISTAKES = 3    # so viele Fehler bis Game Over
-MAX_INPUT_TRIES = 3
+MAX_INPUT_TRIES = 3 # so oft kann der user weder t oder f eingeben
 
 
 def ask_true_false(statement, erfunden, erklaerung=""):
