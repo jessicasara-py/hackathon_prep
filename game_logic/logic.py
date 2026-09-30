@@ -61,20 +61,21 @@ Spielende:
 - keine weitere Frage   -> "not_enough_questions"
 
 
-play_game() gibt einen dieser Strings an main.py zurück:
+result = play_game(questions)
 
-    "won"
-    "lost"
-    "invalid_input"
-    "not_enough_questions"
-
-main.py entscheidet anschließend, was angezeigt wird,
-zum Beispiel Gewinner-ASCII oder Game-Over-ASCII.
+if result == "won":
+    print("Gewonnen!")  # Hier Gewinner-ASCII und Trophäen einfügen.
+elif result == "lost":
+    print("Game Over!")  # Hier Game-Over-ASCII einfügen.
+elif result == "invalid_input":
+    print("Spiel wegen ungültiger Eingaben beendet.")
+elif result == "not_enough_questions":
+    print("Es sind keine weiteren Fragen verfügbar.")
 """
 
 from awards import award_progress  # von Julia importiert
 
-def ask_true_false(statement, erfunden):
+def ask_true_false(statement, erfunden, erklaerung=""):
     """Zeigt eine Aussage und gibt True bei richtiger Antwort zurück.
 
     Bei drei ungültigen Eingaben wird ein ValueError ausgelöst.
@@ -86,9 +87,9 @@ def ask_true_false(statement, erfunden):
 
     # Maximal drei Versuche für eine gültige Eingabe.
     for attempt in range(1, 4):
-        answer = input("  Your Choice [T/F] > ").strip().casefold()
+        answer = input("  Deine Wahl [W/F] > ").strip().casefold()
 
-        if answer in ("t", "f"):
+        if answer in ("w", "f"):
             break
 
         print(f"  [!] Please enter T oder F ein. ({attempt}/3)")
@@ -132,7 +133,7 @@ def play_game(get_question):
         print("------------------------------------------")
 
         try:
-            is_correct = ask_true_false(statement, erfunden)
+            is_correct = ask_true_false(question["aussage"], question["erfunden"], question.get("erklaerung", ""))
         except ValueError as error:
             # Drei ungültige Eingaben beenden das Spiel mit eigenem Ergebnis.
             # main.py kann dafür eine passende Meldung anzeigen.

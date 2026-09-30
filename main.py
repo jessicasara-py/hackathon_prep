@@ -1,36 +1,49 @@
-from game_logic.page_picker import pick_random_page
-from menues.main_menu import main_menu
-from menues.categories_menu import ask_user
-from game_logic.logic import play_game
 from ai_calls.statement_generator import generate_statement
+from game_logic.logic import play_game
+from game_logic.page_picker import pick_random_page
+from menues.categories_menu import ask_user
+from menues.main_menu import main_menu
+
+MIN_VIEWS = 5000     # Aufrufe in den letzten 30 Tagen
+MAX_ATTEMPTS = 3     # so viele Artikel pro Frage probieren, falls die KI scheitert
 
 
-MIN_VIEWS = 5000                 # Aufrufe in den letzten 30 Tagen
-ROUNDS = 12
+def make_get_question(category_name: str, used_titles: set[str]):
+    """Liefert eine Funktion, die bei jedem Aufruf genau EINE neue Frage erzeugt."""
+
+    def get_question():
+        for _ in range(MAX_ATTEMPTS):
+            result = pick_random_page(category_name, MIN_VIEWS, used_titles)
+            if result is None:
+                return None                     # Kategorie erschöpft
+
+            page, _ = result
+            print(f"  … Frage wird erstellt ({page.title})")
+
+            try:
+                statement = generate_statement(page.title, page.text)
+            except Exception as error:          # KI-Fehler → nächsten Artikel probieren
+                print(f"  ! Übersprungen: {error}")
+                continue
+
+            statement["titel"] = page.title
+            return statement
+
+        return None
+
+    return get_question
 
 
 def main():
     used_titles: set[str] = set()  # bereits verwendete Seiten
     choice = main_menu()
 
-
     if choice == "1":
         category_number, menu_mapping = ask_user()
+        category_name = menu_mapping[int(category_number)]["name"]
 
-        def get_question():
-            result = pick_random_page(
-                menu_mapping[category_number]["name"],
-                MIN_VIEWS,
-                used_titles
-            )
-
-            if result is None:
-                return None
-
-            page, views = result
-            return generate_statement(page.title, page.text)
-
-        result = play_game(get_question)
+        print(f"\nQuiz zu '{category_name}' startet …")
+        result = play_game(make_get_question(category_name, used_titles))
 
         if result == "won":
             print(r"""
@@ -59,11 +72,18 @@ def main():
                GAME OVER!
             """)
 
+        elif result == "invalid_input":
+            print("\n  Game aborted: three invalid inputs.")
+
+        elif result == "not_enough_questions":
+            print("\n  No more questions available in this category.")
+            print("  Tip: choose another category or lower MIN_VIEWS.")
+
+        else:
+            print(f"\n  Unexpected result: {result}")
+
     elif choice == "2":
         return
-
-
-
 
 
 if __name__ == "__main__":
