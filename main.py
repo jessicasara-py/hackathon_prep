@@ -42,9 +42,9 @@ def ask_name():
     name = console.input("[bold cyan]What is your name? [/bold cyan]").strip()
 
     print(Panel(
-        f"[bold green]Welcome, {name}![/bold green]",
-        title="WIKITRICKY",
-        border_style="orange1",
+        f"Welcome, {name}!",
+        title="[orange1]WIKITRICKY[/orange1]",
+        border_style="cyan",
         width=30
     ))
     return name
