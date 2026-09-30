@@ -1,6 +1,8 @@
 <p align="center">
-  <img src="wiki_tricky_characters.jpg" alt="WikiTricky" width="800">
+  <img src="wiki_tricky_characters.jpg" alt="WikiTricky" width="800" style="display: block;"><img src="marquee.svg" alt="Scrolling Text" width="800" style="display: block;">
 </p>
+
+
 
 # WikiTricky
 
