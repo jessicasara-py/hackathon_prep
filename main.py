@@ -18,12 +18,12 @@ def make_get_question(category_name: str, used_titles: set[str]):
                 return None                     # Kategorie erschöpft
 
             page, _ = result
-            print(f"  … Frage wird erstellt ({page.title})")
+            print(f"  … Creating question ({page.title})")
 
             try:
                 statement = generate_statement(page.title, page.text)
             except Exception as error:          # KI-Fehler → nächsten Artikel probieren
-                print(f"  ! Übersprungen: {error}")
+                print(f"  ! Skipped: {error}")
                 continue
 
             statement["titel"] = page.title
@@ -49,7 +49,7 @@ def main():
         category_number, menu_mapping = ask_user()
         category_name = menu_mapping[int(category_number)]["name"]
 
-        print(f"\nQuiz zu '{category_name}' startet …")
+        print(f"\nQuiz about '{category_name}' is starting …")
         result = play_game(make_get_question(category_name, used_titles))
 
         if result == "won":
