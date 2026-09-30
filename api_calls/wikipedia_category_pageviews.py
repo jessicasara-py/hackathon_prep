@@ -39,7 +39,7 @@ def get_category_articles_with_views(category: str, days: int = 30) -> dict[str,
 
         if "error" in data:
             raise RuntimeError(
-                f"Wikipedia-API-Fehler bei '{params['gcmtitle']}' "
+                f"Wikipedia-API-Error for '{params['gcmtitle']}' "
                 f"({url}): {data['error'].get('info')}"
             )
 
@@ -57,13 +57,3 @@ def get_category_articles_with_views(category: str, days: int = 30) -> dict[str,
     return views
 
 
-def _demo():
-    views = get_category_articles_with_views("Chemisches Element")
-    top = sorted(views.items(), key=lambda kv: kv[1], reverse=True)[:5]
-    print(f"{len(views)} Artikel gefunden. Top 5:")
-    for title, v in top:
-        print(f"  {title}: {v}")
-
-
-if __name__ == "__main__":
-    _demo()

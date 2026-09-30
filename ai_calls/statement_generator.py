@@ -26,7 +26,7 @@ def generate_statement(title: str, text: str) -> dict:
     # Wir würfeln selbst, ob die Aussage wahr oder erfunden sein soll.
     # So ist die Verteilung fair 50:50 und hängt nicht von der KI ab.
     erfunden = random.choice([True, False])
-    art = "FALSCHE (erfundene)" if erfunden else "WAHRE"
+    art = "FALSE (invented)" if erfunden else "TRUE"
 
     user_prompt = (
         f"Create a {art} Statement.\n\n"
@@ -47,28 +47,18 @@ def generate_statement(title: str, text: str) -> dict:
 
     content = response.choices[0].message.content
     if not content:
-        raise ValueError("KI hat keine Antwort geliefert")
+        raise ValueError("AI did not provide a response")
 
     data = json.loads(content)
 
     if not data.get("statement"):
-        raise ValueError(f"KI-Antwort ohne Aussage: {data}")
+        raise ValueError(f"AI response without a statement: {data}")
 
     return {
         "aussage": data["statement"],
         "erfunden": erfunden,
         "erklaerung": data.get("explanation", ""),
     }
-
-def _demo():
-    from api_calls.wikipedia_get_page import get_page
-
-    page = get_page("Augsburg")
-    result = generate_statement(page.title, page.text)
-    print(json.dumps(result, ensure_ascii=False, indent=2))
-
-
-if __name__ == "__main__":MAX_TEXT_CHARS = 4000   # so viel Artikeltext bekommt die KI (spart Tokens/Kosten)
 
 SYSTEM_PROMPT = """You will create statements for a true/false quiz based on Wikipedia articles.
 Rules:
@@ -91,7 +81,7 @@ def generate_statement(title: str, text: str) -> dict:
     # Wir würfeln selbst, ob die Aussage wahr oder erfunden sein soll.
     # So ist die Verteilung fair 50:50 und hängt nicht von der KI ab.
     erfunden = random.choice([True, False])
-    art = "FALSCHE (erfundene)" if erfunden else "WAHRE"
+    art = "FALSE (invented)" if erfunden else "TRUE"
 
     user_prompt = (
         f"Create a {art} Statement.\n\n"
@@ -112,32 +102,16 @@ def generate_statement(title: str, text: str) -> dict:
 
     content = response.choices[0].message.content
     if not content:
-        raise ValueError("KI hat keine Antwort geliefert")
+        raise ValueError("AI did not provide a response")
 
     data = json.loads(content)
 
     if not data.get("statement"):
-        raise ValueError(f"KI-Antwort ohne Aussage: {data}")
+        raise ValueError(f"AI response without a statement: {data}")
 
     return {
         "aussage": data["statement"],
         "erfunden": erfunden,
         "erklaerung": data.get("explanation", ""),
     }
-
-def _demo():
-    from api_calls.wikipedia_get_page import get_page
-
-    page = get_page("Augsburg")
-    result = generate_statement(page.title, page.text)
-    print(json.dumps(result, ensure_ascii=False, indent=2))
-
-
-if __name__ == "__main__":
-    _demo()
-
-
-
-    _demo()
-
 
