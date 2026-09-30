@@ -43,7 +43,7 @@ def main():
 
     used_titles: set[str] = set()  # bereits verwendete Seiten
     name = ask_name()
-    choice = main_menu()
+
 
 
     while True: # Schleife für "Nochmal spielen?"
