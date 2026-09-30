@@ -21,7 +21,9 @@ def main_menu():
     print(Panel
           (menue, width=30,
            border_style="blue",
-           title="[bold yellow]TRIVIA[/bold yellow]"))
+           title="[bold yellow]TRICKY[/bold yellow]"))
+
+    print()
 
     while True:
         choice = input("Your choice: ")
