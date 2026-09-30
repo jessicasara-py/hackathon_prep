@@ -1,8 +1,13 @@
+from rich.console import Console
+from rich import print
+from rich.panel import Panel
 from ai_calls.statement_generator import generate_statement
 from game_logic.logic import play_game
 from game_logic.page_picker import pick_random_page
 from menues.categories_menu import ask_user
 from menues.main_menu import main_menu
+
+console = Console()
 
 MIN_VIEWS = 5000     # Aufrufe in den letzten 30 Tagen
 MAX_ATTEMPTS = 3     # so viele Artikel pro Frage probieren, falls die KI scheitert
@@ -34,8 +39,14 @@ def make_get_question(category_name: str, used_titles: set[str]):
 
 
 def ask_name():
-    name = input("What is your name? ")
-    print(f"\nWelcome, {name}, to...\n")
+    name = console.input("[bold cyan]What is your name? [/bold cyan]").strip()
+
+    print(Panel(
+        f"Welcome, {name}!",
+        title="[orange1]WIKITRICKY[/orange1]",
+        border_style="cyan",
+        width=30
+    ))
     return name
 
 
@@ -49,12 +60,15 @@ def main():
     while True: # Schleife für "Nochmal spielen?"
         choice = main_menu()
 
+        if choice == "2":
+            print("Goodbye!")
+            break # Schleife beendet
 
-        if choice == "1":
+        while True:
             category_number, menu_mapping = ask_user()
             category_name = menu_mapping[int(category_number)]["name"]
 
-            print(f"\nQuiz zu '{category_name}' startet …")
+            print(f"\nQuiz for '{category_name}' is starting …")
             result = play_game(make_get_question(category_name, used_titles))
 
 
@@ -96,26 +110,14 @@ def main():
 
             # NEU: Frage ob nochmal spielen
             print("\n" + "="*40)
-            play_again = input("Do you want to play again? [Y/N]: ").strip().lower()
+            play_again = console.input("[orange1]Do you want to play again? [Y/N]: [/orange1]").strip().lower()
 
             if play_again not in ("y", "yes"):
                 print("Thanks for playing! See you next time!")
-                break # Schleife beendet
+                return # Schleife beendet
 
             print("\n" + "="*40 + "\n")
             used_titles.clear() # Setzt die verwendeten Titel für das nächste Spiel zurück
-
-
-
-
-        elif choice == "2":
-            print("Goodbye!")
-            break # Schleife beendet
-
-
-
-
-
 
 
 if __name__ == "__main__":

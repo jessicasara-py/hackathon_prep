@@ -1,5 +1,5 @@
 """
-Spiellogik für WikiTrivia.
+Spiellogik für WikiTricky.
 
 Schnittstelle für das Team:
 

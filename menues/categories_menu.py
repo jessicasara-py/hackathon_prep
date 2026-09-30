@@ -19,10 +19,10 @@ def show_menu():
 
     panel = Panel(
         menu_text,
-        title="CHOOSE A CATEGORY",
-        border_style="bright_white",
+        title="[orange1]CHOOSE A CATEGORY[/orange1]",
+        border_style="cyan",
         padding=(1, 2),
-        width=40
+        width=30
     )
     console.print(panel)
     return menu_mapping

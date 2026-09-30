@@ -12,19 +12,19 @@ def main_menu():
     ╚███╔███╔╝██║██║  ██╗██║
      ╚══╝╚══╝ ╚═╝╚═╝  ╚═╝╚═╝"""
 
-    console.print(f"[blue]{logo}[/blue]")
+    console.print(f"[cyan]{logo}[/cyan]")
     print()
 
     menue = """
-    [blue]1. START GAME[/blue]
-    [blue]2. EXIT[/blue]
+    [cyan]1. START GAME[/cyan]
+    [cyan]2. EXIT[/cyan]
     """
 
     console.print(Panel(
         menue,
         width=30,
-        border_style="blue",
-        title="[bold yellow]TRICKY[/bold yellow]"
+        border_style="cyan",
+        title="[bold orange1]TRICKY[/bold orange1]"
     ))
 
     print()
