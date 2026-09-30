@@ -25,12 +25,12 @@ def build_questions(category_number: int, used_titles: set[str]) -> list[dict]:
             break                          # keine Artikel mehr in der Kategorie
 
         page, _ = article_info
-        print(f"  … Frage {len(questions) + 1}/{ROUNDS} wird erstellt ({page.title})")
+        print(f"  … Question {len(questions) + 1}/{ROUNDS} is being generated ({page.title})")
 
         try:
             statement = generate_statement(page.title, page.text)
         except Exception as error:         # KI-Fehler → nächsten Artikel probieren
-            print(f"  ! Übersprungen: {error}")
+            print(f"  ! Skipped: {error}")
             continue
 
         statement["titel"] = page.title
@@ -40,51 +40,64 @@ def build_questions(category_number: int, used_titles: set[str]) -> list[dict]:
 
 
 def main():
-    used_titles: set[str] = set()  # bereits verwendete Seiten
-    choice = main_menu()
+    used_titles: set[str] = set()
 
-    if choice == "1":
-        category_number, menu_mapping = ask_user()
-        category_name = menu_mapping[int(category_number)]["name"]
+    while True: # Schleife für "Nochmal spielen?"
+        choice = main_menu()
 
-        print(f"\nFragen zu '{category_name}' werden vorbereitet …")
-        questions = build_questions(int(category_number), used_titles)
+        if choice == "1":
+            category_number, menu_mapping = ask_user()
+            category_name = menu_mapping[int(category_number)]["name"]
+            print(f"\nPreparing questions for '{category_name}' ...")
 
-        if not questions:
-            print("Keine passende Seite gefunden.")
-            return
+            questions = build_questions(int(category_number), used_titles)
+            if not questions:
+                print("No matching page found.")
+                return
 
-        result = play_game(questions)
+            result = play_game(questions)
 
-        if result == "won":
-            print(r"""
-                   \_\_*
-                 '.*==*==*=*.'
-                 .-\:      /-.
-                | (|:.     |) |
-                 '-|:.     |-'
-                   \::.    /
-                    '::. .'
-                      ) (
-                    *.' '.*
-                   `-------`
-                   YOU WIN!
-            """)
+            if result == "won":
+                print(r"""
+                       \_\_*
+                     '.*==*==*=*.'
+                     .-\:      /-.
+                    | (|:.     |) |
+                     '-|:.     |-'
+                       \::.    /
+                        '::. .'
+                          ) (
+                       *.' '.*
+                       `-------`
+                       YOU WIN!
+                """)
 
-        elif result == "lost":
-            print(r"""
-               .-''''-.
-              /        \
-             |  X    X  |
-             |          |
-              \  ____  /
-               '------'
+            elif result == "lost":
+                print(r"""
+                   .-''''-.
+                  /        \
+                 |  X    X  |
+                 |          |
+                  \  ____  /
+                   '------'
 
-               GAME OVER!
-            """)
+                  GAME OVER!
+                """)
 
-    elif choice == "2":
-        return
+            # NEU: Frage ob nochmal spielen
+            print("\n" + "="*40)
+            play_again = input("Do you want to play again? [Y/N]: ").strip().lower()
+
+            if play_again not in ("y", "yes"):
+                print("Thanks for playing! See you next time!")
+                break # Schleife beendet
+
+            print("\n" + "="*40 + "\n")
+            used_titles.clear() # Setzt die verwendeten Titel für das nächste Spiel zurück
+
+        elif choice == "2":
+            print("Goodbye!")
+            break # Schleife beendet
 
 
 if __name__ == "__main__":
