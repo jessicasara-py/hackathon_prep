@@ -1,4 +1,6 @@
-
+<p align="center">
+  <img src="wiki_tricky_characters.jpg" alt="WikiTricky" width="800">
+</p>
 
 # WikiTricky
 
