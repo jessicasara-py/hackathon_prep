@@ -17,12 +17,3 @@ def get_category_articles(category: str) -> list[str]:
         for title, member in cat.categorymembers.items()
         if member.ns == ARTICLE_NAMESPACE
     ]
-
-
-def _demo():
-    titles = get_category_articles("Großstadt in Deutschland")
-    print(f"{len(titles)} Artikel gefunden, z. B.: {titles[:5]}")
-
-
-if __name__ == "__main__":
-    _demo()

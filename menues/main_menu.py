@@ -1,5 +1,7 @@
-from rich import print
+from rich.console import Console
 from rich.panel import Panel
+
+console = Console(force_terminal=True)
 
 def main_menu():
     logo = """
@@ -10,7 +12,7 @@ def main_menu():
     ╚███╔███╔╝██║██║  ██╗██║
      ╚══╝╚══╝ ╚═╝╚═╝  ╚═╝╚═╝"""
 
-    print(logo)
+    console.print(f"[blue]{logo}[/blue]")
     print()
 
     menue = """
@@ -18,10 +20,15 @@ def main_menu():
     [blue]2. EXIT[/blue]
     """
 
-    print(Panel
-          (menue, width=30,
-           border_style="blue",
-           title="[bold yellow]TRIVIA[/bold yellow]"))
+    console.print(Panel(
+        menue,
+        width=30,
+        border_style="blue",
+        title="[bold orange]TRICKY[/bold orange]"
+    ))
+
+    print()
+
 
     while True:
         choice = input("Your choice: ")

@@ -1,61 +1,62 @@
-from game_logic.page_picker import pick_random_page
-from menues.main_menu import main_menu
-from menues.categories_menu import ask_user, get_article_info
-from game_logic.logic import play_game
-from game_logic.page_picker import get_article_info
 from ai_calls.statement_generator import generate_statement
+from game_logic.logic import play_game
+from game_logic.page_picker import pick_random_page
+from menues.categories_menu import ask_user
+from menues.main_menu import main_menu
 
-MENU_CATEGORY = "Geography"   # erstmal statisch, siehe game_logic/categories.py
-ROUNDS = 3
-MAX_ATTEMPTS = 6    # so viele Artikel probieren wir höchstens, falls die KI mal scheitert
+MIN_VIEWS = 5000     # Aufrufe in den letzten 30 Tagen
+MAX_ATTEMPTS = 3     # so viele Artikel pro Frage probieren, falls die KI scheitert
 
-def build_questions(category_number: int, used_titles: set[str]) -> list[dict]:
-    """
-    Erzeugt ROUNDS Quizfragen aus zufälligen Wikipedia-Artikeln der gewählten Kategorie.
-    Jede Frage: {"aussage": str, "erfunden": bool, "erklaerung": str, "titel": str}
-    """
-    questions: list[dict] = []
 
-    for _ in range(MAX_ATTEMPTS):
-        if len(questions) >= ROUNDS:
-            break
+def make_get_question(category_name: str, used_titles: set[str]):
+    """Liefert eine Funktion, die bei jedem Aufruf genau EINE neue Frage erzeugt."""
 
-        article_info = get_article_info(category_number, used_titles)
-        if article_info is None:
-            break                          # keine Artikel mehr in der Kategorie
+    def get_question():
+        for _ in range(MAX_ATTEMPTS):
+            result = pick_random_page(category_name, MIN_VIEWS, used_titles)
+            if result is None:
+                return None                     # Kategorie erschöpft
+            page, _ = result
+            print(f"  … Frage wird erstellt ({page.title})")
 
-        page, _ = article_info
-        print(f"  … Question {len(questions) + 1}/{ROUNDS} is being generated ({page.title})")
+            try:
+                statement = generate_statement(page.title, page.text)
+            except Exception as error:          # KI-Fehler → nächsten Artikel probieren
+                print(f"  ! Übersprungen: {error}")
+                continue
 
-        try:
-            statement = generate_statement(page.title, page.text)
-        except Exception as error:         # KI-Fehler → nächsten Artikel probieren
-            print(f"  ! Skipped: {error}")
-            continue
+            statement["titel"] = page.title
+            return statement
 
-        statement["titel"] = page.title
-        questions.append(statement)
+        return None
 
-    return questions
+    return get_question
+
+
+def ask_name():
+    name = input("What is your name? ")
+    print(f"\nWelcome, {name}, to...\n")
+    return name
 
 
 def main():
-    used_titles: set[str] = set()
+
+    used_titles: set[str] = set()  # bereits verwendete Seiten
+    name = ask_name()
+    choice = main_menu()
+
 
     while True: # Schleife für "Nochmal spielen?"
         choice = main_menu()
 
+
         if choice == "1":
             category_number, menu_mapping = ask_user()
             category_name = menu_mapping[int(category_number)]["name"]
-            print(f"\nPreparing questions for '{category_name}' ...")
 
-            questions = build_questions(int(category_number), used_titles)
-            if not questions:
-                print("No matching page found.")
-                return
+            print(f"\nQuiz zu '{category_name}' startet …")
+            result = play_game(make_get_question(category_name, used_titles))
 
-            result = play_game(questions)
 
             if result == "won":
                 print(r"""
@@ -84,6 +85,15 @@ def main():
                   GAME OVER!
                 """)
 
+            elif result == "invalid_input":
+                print("\n  Game aborted: three invalid inputs.")
+
+            elif result == "not_enough_questions":
+                print("\n  No more questions available in this category.")
+                print("  Tip: choose another category or lower MIN_VIEWS.")
+            else:
+                print(f"\n  Unexpected result: {result}")
+
             # NEU: Frage ob nochmal spielen
             print("\n" + "="*40)
             play_again = input("Do you want to play again? [Y/N]: ").strip().lower()
@@ -95,9 +105,17 @@ def main():
             print("\n" + "="*40 + "\n")
             used_titles.clear() # Setzt die verwendeten Titel für das nächste Spiel zurück
 
+
+
+
         elif choice == "2":
             print("Goodbye!")
             break # Schleife beendet
+
+
+
+
+
 
 
 if __name__ == "__main__":

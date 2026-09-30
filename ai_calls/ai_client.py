@@ -17,6 +17,6 @@ def get_ai_client() -> OpenAI:
     if _client is None:
         api_key = os.getenv("OPENAI_API_KEY")
         if not api_key:
-            raise SystemExit("Fehler: OPENAI_API_KEY fehlt in der .env")
+            raise SystemExit("Error: OPENAI_API_KEY is missing in the .env")
         _client = OpenAI(api_key=api_key)
     return _client

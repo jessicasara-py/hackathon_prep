@@ -1,6 +1,8 @@
 <p align="center">
-  <img src="wiki_tricky_characters.jpg" alt="WikiTricky" width="800">
+  <img src="wiki_tricky_characters.jpg" alt="WikiTricky" width="800" style="display: block;"><img src="marquee.svg" alt="Scrolling Text" width="800" style="display: block;">
 </p>
+
+
 
 # WikiTricky
 
@@ -20,7 +22,7 @@ The player chooses a category. The game retrieves a random Wikipedia article, an
    ```json
    { "aussage": "...", "erfunden": true }
    ```
-5. **User input**: The player answers with `W` (true) or `F` (false)
+5. **User input**: The player answers with `T` (true) or `F` (false)
 6. **Input validation**: Invalid input can be entered up to 3 times
 7. **Evaluation**: :) or :( with the current score
 8. **Trophies**: Awards for special achievements
