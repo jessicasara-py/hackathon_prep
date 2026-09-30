@@ -12,7 +12,7 @@ def main_menu():
     ╚███╔███╔╝██║██║  ██╗██║
      ╚══╝╚══╝ ╚═╝╚═╝  ╚═╝╚═╝"""
 
-    console.print(f"[blue]{logo}[/blue]")
+    console.print(f"[cyan]{logo}[/cyan]")
     print()
 
     menue = """
@@ -24,7 +24,7 @@ def main_menu():
         menue,
         width=30,
         border_style="blue",
-        title="[bold yellow]TRICKY[/bold yellow]"
+        title="[bold orange1]TRICKY[/bold orange1]"
     ))
 
     print()
