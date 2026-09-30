@@ -110,11 +110,11 @@ def main():
 
             # NEU: Frage ob nochmal spielen
             print("\n" + "="*40)
-            play_again = console.input("[bold yellow]Do you want to play again? [Y/N]: [/bold yellow]").strip().lower()
+            play_again = console.input("[orange1]Do you want to play again? [Y/N]: [/orange1]").strip().lower()
 
             if play_again not in ("y", "yes"):
                 print("Thanks for playing! See you next time!")
-                break # Schleife beendet
+                return # Schleife beendet
 
             print("\n" + "="*40 + "\n")
             used_titles.clear() # Setzt die verwendeten Titel für das nächste Spiel zurück
