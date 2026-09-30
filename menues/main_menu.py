@@ -24,7 +24,7 @@ def main_menu():
         menue,
         width=30,
         border_style="blue",
-        title="[bold orange]TRICKY[/bold orange]"
+        title="[bold yellow]TRICKY[/bold yellow]"
     ))
 
     print()

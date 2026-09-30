@@ -16,14 +16,13 @@ def make_get_question(category_name: str, used_titles: set[str]):
             result = pick_random_page(category_name, MIN_VIEWS, used_titles)
             if result is None:
                 return None                     # Kategorie erschöpft
-
             page, _ = result
-            print(f"  … Frage wird erstellt ({page.title})")
+            print(f"  … Question is being generated ({page.title})")
 
             try:
                 statement = generate_statement(page.title, page.text)
             except Exception as error:          # KI-Fehler → nächsten Artikel probieren
-                print(f"  ! Übersprungen: {error}")
+                print(f"  ! Skipped: {error}")
                 continue
 
             statement["titel"] = page.title
@@ -41,56 +40,82 @@ def ask_name():
 
 
 def main():
+
     used_titles: set[str] = set()  # bereits verwendete Seiten
     name = ask_name()
-    choice = main_menu()
 
-    if choice == "1":
-        category_number, menu_mapping = ask_user()
-        category_name = menu_mapping[int(category_number)]["name"]
 
-        print(f"\nQuiz zu '{category_name}' startet …")
-        result = play_game(make_get_question(category_name, used_titles))
 
-        if result == "won":
-            print(r"""
-                   \_\_*
-                 '.*==*==*=*.'
-                 .-\:      /-.
-                | (|:.     |) |
-                 '-|:.     |-'
-                   \::.    /
-                    '::. .'
-                      ) (
-                    *.' '.*
-                   `-------`
-                   YOU WIN!
-            """)
+    while True: # Schleife für "Nochmal spielen?"
+        choice = main_menu()
 
-        elif result == "lost":
-            print(r"""
-               .-''''-.
-              /        \
-             |  X    X  |
-             |          |
-              \  ____  /
-               '------'
 
-               GAME OVER!
-            """)
+        if choice == "1":
+            category_number, menu_mapping = ask_user()
+            category_name = menu_mapping[int(category_number)]["name"]
 
-        elif result == "invalid_input":
-            print("\n  Game aborted: three invalid inputs.")
+            print(f"\nQuiz zu '{category_name}' startet …")
+            result = play_game(make_get_question(category_name, used_titles))
 
-        elif result == "not_enough_questions":
-            print("\n  No more questions available in this category.")
-            print("  Tip: choose another category or lower MIN_VIEWS.")
 
-        else:
-            print(f"\n  Unexpected result: {result}")
+            if result == "won":
+                print(r"""
+                       \_\_*
+                     '.*==*==*=*.'
+                     .-\:      /-.
+                    | (|:.     |) |
+                     '-|:.     |-'
+                       \::.    /
+                        '::. .'
+                          ) (
+                       *.' '.*
+                       `-------`
+                       YOU WIN!
+                """)
 
-    elif choice == "2":
-        return
+            elif result == "lost":
+                print(r"""
+                   .-''''-.
+                  /        \
+                 |  X    X  |
+                 |          |
+                  \  ____  /
+                   '------'
+
+                  GAME OVER!
+                """)
+
+            elif result == "invalid_input":
+                print("\n  Game aborted: three invalid inputs.")
+
+            elif result == "not_enough_questions":
+                print("\n  No more questions available in this category.")
+                print("  Tip: choose another category or lower MIN_VIEWS.")
+            else:
+                print(f"\n  Unexpected result: {result}")
+
+            # NEU: Frage ob nochmal spielen
+            print("\n" + "="*40)
+            play_again = input("Do you want to play again? [Y/N]: ").strip().lower()
+
+            if play_again not in ("y", "yes"):
+                print("Thanks for playing! See you next time!")
+                break # Schleife beendet
+
+            print("\n" + "="*40 + "\n")
+            used_titles.clear() # Setzt die verwendeten Titel für das nächste Spiel zurück
+
+
+
+
+        elif choice == "2":
+            print("Goodbye!")
+            break # Schleife beendet
+
+
+
+
+
 
 
 if __name__ == "__main__":
