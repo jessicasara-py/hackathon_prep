@@ -18,12 +18,12 @@ CATEGORIES: dict[str, list[str]] = {
     "History": [
         "Ancient history",
         "20th century",
-        "Historical events"
+        "World War II"
     ],
     "Sports": [
-        "Footballers",
-        "Olympic medalists",
-        "Tennis players"
+        "Olympic Games",
+        "Sports",
+        "Association football"
     ],
     "Technology": [
         "Computer science",
@@ -31,9 +31,9 @@ CATEGORIES: dict[str, list[str]] = {
         "Software"
     ],
     "Music": [
-        "Rock music groups",
-        "Classical composers",
-        "Singers"
+        "Albums",
+        "Songs",
+        "Musical instruments"
     ]
 }
 

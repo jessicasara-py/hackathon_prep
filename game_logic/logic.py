@@ -85,7 +85,7 @@ def ask_true_false(statement, erfunden):
     return False
 
 
-def play_game(questions):
+def play_game(get_question):
     """Spielt die übergebenen Fragen durch und gibt das Spielergebnis zurück."""
     correct = 0
     mistakes = 0
@@ -94,8 +94,15 @@ def play_game(questions):
     print("       WIKITRIVIA - TRUE OR FALSE")
     print("==========================================")
 
-    for number, question in enumerate(questions, start=1):
-        # Diese Schlüssel müssen mit dem Ergebnis des KI-Teils übereinstimmen.
+    number = 0
+
+    while correct < 10 and mistakes < 3:
+        number += 1
+        question = get_question()
+
+        if question is None:
+            return "not_enough_questions"
+
         statement = question["aussage"]
         erfunden = question["erfunden"]
 
@@ -126,8 +133,7 @@ def play_game(questions):
             # main.py kann hier das Gewinnerbild und Trophäen anzeigen.
             return "won"
 
-    # Der Fragen-Generator hat zu wenige Fragen geliefert. kann dann später weggelassen werden
-    return "not_enough_questions"
+    
 
 
 if __name__ == "__main__":
