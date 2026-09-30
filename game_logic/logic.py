@@ -1,5 +1,5 @@
 """
-Spiellogik für WikiTrivia.
+Spiellogik für WikiTricky.
 
 Schnittstelle für das Team:
 
@@ -73,7 +73,7 @@ def play_game(get_question):
     number = 0
 
     print("\n==========================================")
-    print("       WIKITRIVIA - TRUE OR FALSE")
+    print("       WIKITRICKY - TRUE OR FALSE")
     print("==========================================")
 
     while correct < WIN_SCORE and mistakes < MAX_MISTAKES:
