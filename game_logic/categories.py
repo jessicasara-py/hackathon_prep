@@ -54,20 +54,3 @@ def get_menu_mapping() -> dict[int, dict]:
         }
     return menu_mapping
 
-
-def _demo():
-    # Zeigt pro Kategorie, wie viele Artikel sie hat und wie viele genug Aufrufe haben.
-    from api_calls.category_cache import get_cached_category_views
-
-    min_views = 5000
-    for menu, wiki_categories in CATEGORIES.items():
-        print(f"\n== {menu} ==")
-        for cat in wiki_categories:
-            views = get_cached_category_views(cat)
-            popular = sum(1 for v in views.values() if v >= min_views)
-            status = "OK " if popular else "!! "
-            print(f"  {status}{cat}: {len(views)} Artikel, {popular} mit >= {min_views} Aufrufen")
-
-
-if __name__ == "__main__":
-    _demo()

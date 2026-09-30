@@ -30,10 +30,3 @@ def get_pageviews(title: str, days: int = 30) -> int:
 
     return sum(item["views"] for item in response.json().get("items", []))
 
-
-def _demo():
-    print("Augsburg, Aufrufe letzte 30 Tage:", get_pageviews("Augsburg"))
-
-
-if __name__ == "__main__":
-    _demo()

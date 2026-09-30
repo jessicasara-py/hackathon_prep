@@ -23,7 +23,7 @@ def pick_random_page(
     """
     wiki_categories = CATEGORIES.get(menu_category)
     if not wiki_categories:
-        raise ValueError(f"Unbekannte Menü-Kategorie: {menu_category}")
+        raise ValueError(f"Unknown menu category: {menu_category}")
 
     # Kandidaten aus allen zugehörigen Wikipedia-Kategorien sammeln
     candidates: dict[str, int] = {}
