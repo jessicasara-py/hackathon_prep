@@ -4,6 +4,7 @@ from menues.categories_menu import ask_user
 from game_logic.logic import play_game
 from ai_calls.statement_generator import generate_statement
 
+
 MIN_VIEWS = 5000                 # Aufrufe in den letzten 30 Tagen
 ROUNDS = 12
 

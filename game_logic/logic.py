@@ -2,52 +2,74 @@
 Spiellogik für WikiTrivia.
 
 Aufgabe dieser Datei:
-- Aussagen anzeigen, hier sind gerade nur Bsp. zum testen
-- Antworten W/F prüfen, können auch andere Zeichen benutzen
+- Aussagen anzeigen
+- Antworten T/F prüfen
 - Richtige Antworten und Fehler zählen
+- Fortschritt nach jeder Antwort anzeigen
 - Nach 10 richtigen Antworten oder 3 Fehlern das Spiel beenden
 
+
 Schnittstelle für das Team:
-    play_game(questions) für die main...
-    in die main importieren >>> from game_logic.logic import play_game
 
-questions muss eine Liste von Dictionaries sein, zum Beispiel:
-    [
-        {"aussage": "Berlin ist die Hauptstadt Deutschlands.", "erfunden": False},
-        {"aussage": "Die Erde hat zwei Monde.", "erfunden": True},
-    ]
+    play_game(get_question)
 
-Der KI-Teil liefert für jede Frage:
-- "aussage": den Text, der dem Spieler angezeigt wird
-- "erfunden": True, wenn die Aussage falsch ist; sonst False
+Import in main.py:
+
+    from game_logic.logic import play_game
+
+
+get_question ist eine Funktion, die immer genau EINE neue Frage liefert.
+
+Eine Frage ist ein Dictionary und sieht zum Beispiel so aus:
+
+    {
+        "aussage": "Berlin ist die Hauptstadt Deutschlands.",
+        "erfunden": False
+    }
+
+
+Bedeutung:
+
+- "aussage":
+    Der Text, der dem Spieler angezeigt wird.
+
+- "erfunden":
+    False = Aussage ist wahr
+    True  = Aussage ist erfunden / falsch
+
+
+Ablauf des Spiels:
+
+1. play_game() fordert über get_question() eine Frage an.
+2. Die Frage wird dem Spieler angezeigt.
+3. Der Spieler antwortet mit T oder F.
+4. Die Antwort wird geprüft.
+5. Richtige Antworten oder Fehler werden gezählt.
+6. Der Fortschritt wird angezeigt.
+7. Nur wenn das Spiel weiterläuft, wird die nächste Frage angefordert.
+
+Dadurch werden nicht alle Fragen vorher erzeugt.
+Eine neue Wikipedia-/KI-Frage wird erst erstellt, wenn sie wirklich
+für die nächste Runde benötigt wird.
+
+
+Spielende:
+
+- 10 richtige Antworten -> "won"
+- 3 falsche Antworten  -> "lost"
+- 3 ungültige Eingaben -> "invalid_input"
+- keine weitere Frage   -> "not_enough_questions"
+
 
 play_game() gibt einen dieser Strings an main.py zurück:
-- "won": 10 richtige Antworten erreicht >>>ASCII im main
-- "lost": 3 falsche Antworten erreicht >>>ASCII im main
-- "invalid_input": dreimal hintereinander keine gültige Eingabe
-- "not_enough_questions": Die Fragen sind aufgebraucht
 
-___________________________________________________________________
+    "won"
+    "lost"
+    "invalid_input"
+    "not_enough_questions"
 
-BSP.: für den main Teil:
-from game_logic.logic import play_game
-
-# Hier die Fragen aus dem Wikipedia- und KI-Teil sammeln.
-# Jede Frage braucht genau die Schlüssel "aussage" und "erfunden".
-questions = [
-    {"aussage": "Berlin ist die Hauptstadt Deutschlands.", "erfunden": False}
-]
-
-result = play_game(questions)
-
-if result == "won":
-    print("Gewonnen!")  # Hier Gewinner-ASCII und Trophäen einfügen.
-elif result == "lost":
-    print("Game Over!")  # Hier Game-Over-ASCII einfügen.
-elif result == "invalid_input":
-    print("Spiel wegen ungültiger Eingaben beendet.")
-elif result == "not_enough_questions":
-    print("Es sind keine weiteren Fragen verfügbar.")
+main.py entscheidet anschließend, was angezeigt wird,
+zum Beispiel Gewinner-ASCII oder Game-Over-ASCII.
 """
 
 from awards import award_progress  # von Julia importiert
@@ -132,17 +154,3 @@ def play_game(get_question):
         if correct == 10:
             # main.py kann hier das Gewinnerbild und Trophäen anzeigen.
             return "won"
-
-    
-
-
-if __name__ == "__main__":
-    # Lokaler Test dieser Datei. Dieser Teil läuft NICHT beim Import in main.py.
-    test_questions = [
-        {"aussage": "Berlin ist die Hauptstadt Deutschlands.", "erfunden": False},
-        {"aussage": "Die Erde hat zwei Monde.", "erfunden": True},
-        {"aussage": "Paris liegt in Italien.", "erfunden": True},
-    ]
-
-    result = play_game(test_questions)
-    print(f"\nTestergebnis: {result}")
