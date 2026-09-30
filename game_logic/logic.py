@@ -118,7 +118,7 @@ def play_game(get_question):
 
     number = 0
 
-    while correct < 10 and mistakes < 3:
+    while correct < 5 and mistakes < 3:
         number += 1
         question = get_question()
 
@@ -151,6 +151,6 @@ def play_game(get_question):
             # main.py kann hier das Game-Over-ASCII-Bild anzeigen.
             return "lost"
 
-        if correct == 10:
+        if correct == 5:
             # main.py kann hier das Gewinnerbild und Trophäen anzeigen.
             return "won"
