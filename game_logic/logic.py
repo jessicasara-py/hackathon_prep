@@ -23,6 +23,7 @@ Spielende / Rückgabewerte:
 - keine weitere Frage             -> "not_enough_questions"
 """
 
+from rich import print
 from awards import award_progress  # von Julia importiert
 
 WIN_SCORE = 5       # so viele richtige Antworten zum Gewinnen
@@ -36,9 +37,9 @@ def ask_true_false(statement, erfunden, erklaerung=""):
     Bei drei ungültigen Eingaben wird ein ValueError ausgelöst.
     Eine gültige, aber falsche Antwort gibt False zurück.
     """
-    print("+----------------------------------------+")
-    print(f"  {statement}")
-    print("+----------------------------------------+")
+    print("[cyan]+----------------------------------------+[/cyan]")
+    print(f"  [orange1]{statement}[/orange1]")
+    print("[cyan]+----------------------------------------+[/cyan]")
 
     for attempt in range(1, MAX_INPUT_TRIES + 1):
         answer = input("  Your choice [T/F] > ").strip().casefold()
@@ -56,12 +57,12 @@ def ask_true_false(statement, erfunden, erklaerung=""):
     is_correct = answer == correct_answer
 
     if is_correct:
-        print("  [OK] Correct! :)")
+        print("  [green][OK][/green] Correct! :)")
     else:
-        print(f"  [X] Sorry, wrong. :( ")
+        print("  [red][X][/red] Sorry, wrong. :(")
 
     if erklaerung:
-        print(f"  ℹ {erklaerung}")
+        print(f"  ℹ [orange1]{erklaerung}[/orange1]")
 
     return is_correct
 
@@ -72,9 +73,9 @@ def play_game(get_question):
     mistakes = 0
     number = 0
 
-    print("\n==========================================")
-    print("       WIKITRIVIA - TRUE OR FALSE")
-    print("==========================================")
+    print("\n[cyan]==========================================[/cyan]")
+    print("[orange1]       WIKITRICKY - TRUE OR FALSE[/orange1]")
+    print("[cyan]==========================================[/cyan]")
 
     while correct < WIN_SCORE and mistakes < MAX_MISTAKES:
         number += 1
