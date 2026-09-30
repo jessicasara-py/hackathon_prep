@@ -39,8 +39,15 @@ def build_questions(category_number: int, used_titles: set[str]) -> list[dict]:
     return questions
 
 
+def ask_name():
+    name = input("What is your name? ")
+    print(f"\nWelcome, {name}, to...\n")
+    return name
+
+
 def main():
     used_titles: set[str] = set()  # bereits verwendete Seiten
+    name = ask_name()
     choice = main_menu()
 
     if choice == "1":
