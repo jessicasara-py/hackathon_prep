@@ -44,7 +44,7 @@ def ask_name():
     print(Panel(
         f"[bold green]Welcome, {name}![/bold green]",
         title="WIKITRICKY",
-        border_style="bright_yellow",
+        border_style="orange1",
         width=30
     ))
     return name
