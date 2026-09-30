@@ -34,8 +34,15 @@ def make_get_question(category_name: str, used_titles: set[str]):
     return get_question
 
 
+def ask_name():
+    name = input("What is your name? ")
+    print(f"\nWelcome, {name}, to...\n")
+    return name
+
+
 def main():
     used_titles: set[str] = set()  # bereits verwendete Seiten
+    name = ask_name()
     choice = main_menu()
 
     if choice == "1":

@@ -12,7 +12,7 @@ def main_menu():
     ╚███╔███╔╝██║██║  ██╗██║
      ╚══╝╚══╝ ╚═╝╚═╝  ╚═╝╚═╝"""
 
-    console.print(f"[green]{logo}[/green]")
+    console.print(f"[blue]{logo}[/blue]")
     print()
 
     menue = """
@@ -24,8 +24,11 @@ def main_menu():
         menue,
         width=30,
         border_style="blue",
-        title="[bold yellow]TRIVIA[/bold yellow]"
+        title="[bold orange]TRICKY[/bold orange]"
     ))
+
+    print()
+
 
     while True:
         choice = input("Your choice: ")
