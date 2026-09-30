@@ -1,5 +1,5 @@
 def award_progress(correct_answers, failed_attempts):
-    goal = 10
+    goal = 5
     max_failed_attempts = 3
     GREEN = "\x1b[32m"
     RED = "\x1b[31m"

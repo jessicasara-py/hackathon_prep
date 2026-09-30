@@ -1,56 +1,34 @@
 """
 Spiellogik für WikiTrivia.
 
-Aufgabe dieser Datei:
-- Aussagen anzeigen, hier sind gerade nur Bsp. zum testen
-- Antworten W/F prüfen, können auch andere Zeichen benutzen
-- Richtige Antworten und Fehler zählen
-- Nach 10 richtigen Antworten oder 3 Fehlern das Spiel beenden
-
 Schnittstelle für das Team:
-    play_game(questions) für die main...
-    in die main importieren >>> from game_logic.logic import play_game
 
-questions muss eine Liste von Dictionaries sein, zum Beispiel:
-    [
-        {"aussage": "Berlin ist die Hauptstadt Deutschlands.", "erfunden": False},
-        {"aussage": "Die Erde hat zwei Monde.", "erfunden": True},
-    ]
+    from game_logic.logic import play_game
+    result = play_game(get_question)
 
-Der KI-Teil liefert für jede Frage:
-- "aussage": den Text, der dem Spieler angezeigt wird
-- "erfunden": True, wenn die Aussage falsch ist; sonst False
+get_question ist eine Funktion, die bei jedem Aufruf genau EINE neue Frage liefert
+(oder None, wenn keine Frage mehr verfügbar ist):
 
-play_game() gibt einen dieser Strings an main.py zurück:
-- "won": 10 richtige Antworten erreicht >>>ASCII im main
-- "lost": 3 falsche Antworten erreicht >>>ASCII im main
-- "invalid_input": dreimal hintereinander keine gültige Eingabe
-- "not_enough_questions": Die Fragen sind aufgebraucht
+    {
+        "aussage": "Berlin ist die Hauptstadt Deutschlands.",
+        "erfunden": False,              # False = wahr, True = erfunden
+        "erklaerung": "..."             # optional
+    }
 
-___________________________________________________________________
+Spielende / Rückgabewerte:
 
-BSP.: für den main Teil:
-from game_logic.logic import play_game
-
-# Hier die Fragen aus dem Wikipedia- und KI-Teil sammeln.
-# Jede Frage braucht genau die Schlüssel "aussage" und "erfunden".
-questions = [
-    {"aussage": "Berlin ist die Hauptstadt Deutschlands.", "erfunden": False}
-]
-
-result = play_game(questions)
-
-if result == "won":
-    print("Gewonnen!")  # Hier Gewinner-ASCII und Trophäen einfügen.
-elif result == "lost":
-    print("Game Over!")  # Hier Game-Over-ASCII einfügen.
-elif result == "invalid_input":
-    print("Spiel wegen ungültiger Eingaben beendet.")
-elif result == "not_enough_questions":
-    print("Es sind keine weiteren Fragen verfügbar.")
+- WIN_SCORE richtige Antworten    -> "won"
+- MAX_MISTAKES falsche Antworten  -> "lost"
+- 3 ungültige Eingaben            -> "invalid_input"
+- keine weitere Frage             -> "not_enough_questions"
 """
 
 from awards import award_progress  # von Julia importiert
+
+WIN_SCORE = 5       # so viele richtige Antworten zum Gewinnen
+MAX_MISTAKES = 3    # so viele Fehler bis Game Over
+MAX_INPUT_TRIES = 3 # so oft kann der user weder t oder f eingeben
+
 
 def ask_true_false(statement, erfunden, erklaerung=""):
     """Zeigt eine Aussage und gibt True bei richtiger Antwort zurück.
@@ -62,56 +40,59 @@ def ask_true_false(statement, erfunden, erklaerung=""):
     print(f"  {statement}")
     print("+----------------------------------------+")
 
-    # Maximal drei Versuche für eine gültige Eingabe.
-    for attempt in range(1, 4):
-        answer = input("  Deine Wahl [W/F] > ").strip().casefold()
+    for attempt in range(1, MAX_INPUT_TRIES + 1):
+        answer = input("  Your choice [T/F] > ").strip().casefold()
 
-        if answer in ("w", "f"):
+        if answer in ("t", "f"):
             break
 
-        print(f"  [!] Bitte gib W oder F ein. ({attempt}/3)")
+        print(f"  [!] Please enter T or F. ({attempt}/{MAX_INPUT_TRIES})")
     else:
-        # Dieser Teil läuft nur, wenn kein gültiges W oder F eingegeben wurde.
-        raise ValueError("Dreimal eine ungültige Antwort eingegeben.")
+        # Läuft nur, wenn keine gültige Eingabe kam (Schleife ohne break beendet).
+        raise ValueError("Entered an invalid answer three times.")
 
-    # erfunden=True bedeutet: Die Aussage ist falsch und F ist richtig.
-    correct_answer = "f" if erfunden else "w"
+    # erfunden=True bedeutet: Die Aussage ist falsch, also ist F richtig.
+    correct_answer = "f" if erfunden else "t"
     is_correct = answer == correct_answer
 
     if is_correct:
-        print("  [OK] Richtig! :)")
+        print("  [OK] Correct! :)")
     else:
-        print(f"  [X] Leider falsch. :( Richtig war: ")
+        print(f"  [X] Sorry, wrong. :( ")
 
-    # NEU: Erklärung in beiden Fällen anzeigen (falls vorhanden)
     if erklaerung:
         print(f"  ℹ {erklaerung}")
 
     return is_correct
 
 
-def play_game(questions):
-    """Spielt die übergebenen Fragen durch und gibt das Spielergebnis zurück."""
+def play_game(get_question):
+    """Spielt Runden, bis gewonnen/verloren ist, und gibt das Ergebnis zurück."""
     correct = 0
     mistakes = 0
+    number = 0
 
     print("\n==========================================")
-    print("       WIKITRIVIA - WAHR ODER FALSCH")
+    print("       WIKITRIVIA - TRUE OR FALSE")
     print("==========================================")
 
-    for number, question in enumerate(questions, start=1):
-        # Diese Schlüssel müssen mit dem Ergebnis des KI-Teils übereinstimmen.
-        statement = question["aussage"]
-        erfunden = question["erfunden"]
+    while correct < WIN_SCORE and mistakes < MAX_MISTAKES:
+        number += 1
+        question = get_question()
 
-        print(f"\n              RUNDE {number}")
+        if question is None:
+            return "not_enough_questions"
+
+        print(f"\n              ROUND {number}")
         print("------------------------------------------")
 
         try:
-            is_correct = ask_true_false(question["aussage"], question["erfunden"], question.get("erklaerung", ""))
+            is_correct = ask_true_false(
+                question["aussage"],
+                question["erfunden"],
+                question.get("erklaerung", ""),
+            )
         except ValueError as error:
-            # Drei ungültige Eingaben beenden das Spiel mit eigenem Ergebnis.
-            # main.py kann dafür eine passende Meldung anzeigen.
             print(f"  [X] {error}")
             return "invalid_input"
 
@@ -120,28 +101,8 @@ def play_game(questions):
         else:
             mistakes += 1
 
-        award_progress(correct, mistakes)   # geändert, sonst taucht es doppelt auf
-        print()                             # bei award
+        award_progress(correct, mistakes)
+        print()
 
-        if mistakes == 3:
-            # main.py kann hier das Game-Over-ASCII-Bild anzeigen.
-            return "lost"
-
-        if correct == 10:
-            # main.py kann hier das Gewinnerbild und Trophäen anzeigen.
-            return "won"
-
-    # Der Fragen-Generator hat zu wenige Fragen geliefert. kann dann später weggelassen werden
-    return "not_enough_questions"
-
-
-if __name__ == "__main__":
-    # Lokaler Test dieser Datei. Dieser Teil läuft NICHT beim Import in main.py.
-    test_questions = [
-        {"aussage": "Berlin ist die Hauptstadt Deutschlands.", "erfunden": False},
-        {"aussage": "Die Erde hat zwei Monde.", "erfunden": True},
-        {"aussage": "Paris liegt in Italien.", "erfunden": True},
-    ]
-
-    result = play_game(test_questions)
-    print(f"\nTestergebnis: {result}")
+    # Die Schleife endet nur über eine der beiden Bedingungen:
+    return "won" if correct >= WIN_SCORE else "lost"

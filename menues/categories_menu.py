@@ -21,7 +21,8 @@ def show_menu():
         menu_text,
         title="CHOOSE A CATEGORY",
         border_style="bright_white",
-        padding=(1, 2)
+        padding=(1, 2),
+        width=40
     )
     console.print(panel)
     return menu_mapping
